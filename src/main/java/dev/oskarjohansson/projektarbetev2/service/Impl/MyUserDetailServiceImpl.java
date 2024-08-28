@@ -2,6 +2,7 @@ package dev.oskarjohansson.projektarbetev2.service.Impl;
 
 import dev.oskarjohansson.projektarbetev2.configuration.SecurityConfiguration;
 import dev.oskarjohansson.projektarbetev2.model.MyUser;
+import dev.oskarjohansson.projektarbetev2.model.RegisterRequest;
 import dev.oskarjohansson.projektarbetev2.service.MyUserDetailService;
 import dev.oskarjohansson.projektarbetev2.service.RepositoryService;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +18,7 @@ public final class MyUserDetailServiceImpl extends MyUserDetailServiceUtility im
 
     public MyUserDetailServiceImpl(RepositoryService repositoryService) {
         this.repositoryService = repositoryService;
+
     }
 
     @Override
@@ -24,5 +26,18 @@ public final class MyUserDetailServiceImpl extends MyUserDetailServiceUtility im
         Optional<MyUser> user = repositoryService.getUserByUsername(username);
         return createUserDetailsAndGrantAuthority(user);
     }
+
+    public MyUser saveUser(RegisterRequest request) throws Exception {
+        LOG.info("New user saved with email address: {}", request.username());
+        return repositoryService
+                .saveUser(
+                        createNewUser(request)
+                );
+    }
+
+    public List<MyUser> getUsers() {
+        return repositoryService.getAllUsers();
+    }
+
 
 }
