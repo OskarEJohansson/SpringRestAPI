@@ -6,6 +6,6 @@ import java.time.Instant;
 
 
 @Document
-public record UserConsent(Boolean isTermsAndAgreementsConsented, Instant timestamp) {
+public record UserConsent(Boolean isTermsAndAgreementsConsented, Instant timestamp, String username) {
 
 }
