@@ -5,16 +5,21 @@ import dev.oskarjohansson.projektarbetev2.model.MyUser;
 import dev.oskarjohansson.projektarbetev2.model.RegisterRequest;
 import dev.oskarjohansson.projektarbetev2.repository.UserRepository;
 import dev.oskarjohansson.projektarbetev2.service.ConsentService;
+import dev.oskarjohansson.projektarbetev2.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
-public final class UserServiceImpl {
+public final class UserServiceImpl implements UserService {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserServiceImpl.class);
     private final UserRepository userRepository;
@@ -28,15 +33,17 @@ public final class UserServiceImpl {
 
     }
 
-    public MyUser saveUser(RegisterRequest request) throws Exception {
-
-        return userRepository.save(
-                createNewUser(request)
-        );
+    public Optional<MyUser> saveUser(RegisterRequest registerRequest) throws IllegalArgumentException {
+        return Optional.of(userRepository.save(createNewUser(registerRequest)));
     }
 
     public List<MyUser> getUsers() {
         return userRepository.findAll();
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return null;
     }
 
     public MyUser createNewUser(@Validated RegisterRequest registerRequest) throws IllegalArgumentException {

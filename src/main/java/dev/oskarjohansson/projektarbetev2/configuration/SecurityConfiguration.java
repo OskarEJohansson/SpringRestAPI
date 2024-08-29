@@ -36,13 +36,14 @@ public class SecurityConfiguration {
     @Qualifier(value = "rsaPublicKey")
     public RSAPublicKey getPublicKeyFromTokenService() throws Exception{
         RestTemplate restTemplate = new RestTemplate();
-        String jwkUrl = "localhost:8081/public-key-controller/v1/public-key";
+        String jwkUrl = "http://localhost:8081/public-key-controller/v1/public-key";
         String jwkResponse = restTemplate.getForObject(jwkUrl, String.class);
 
         JWK jwk = JWK.parse(jwkResponse);
 
         return jwk.toRSAKey().toRSAPublicKey();
     }
+
     @Bean
     public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
         return http
@@ -53,7 +54,7 @@ public class SecurityConfiguration {
                         .accessDeniedHandler(new BearerTokenAccessDeniedHandler()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("").permitAll()
+                        .requestMatchers("/user-controller/v1/login").permitAll()
                         .anyRequest().authenticated())
                 .build();
     }
