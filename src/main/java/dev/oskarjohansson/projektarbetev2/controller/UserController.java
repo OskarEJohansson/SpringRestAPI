@@ -2,6 +2,9 @@ package dev.oskarjohansson.projektarbetev2.controller;
 
 
 import dev.oskarjohansson.projektarbetev2.model.LoginRequest;
+import dev.oskarjohansson.projektarbetev2.model.Review;
+import dev.oskarjohansson.projektarbetev2.model.ReviewRequest;
+import dev.oskarjohansson.projektarbetev2.service.ReviewService;
 import dev.oskarjohansson.projektarbetev2.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Base64;
+import java.security.Principal;
 
 @RestController()
 @RequestMapping("/user-controller")
@@ -23,15 +26,17 @@ public class UserController {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
+    private final ReviewService reviewService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, ReviewService reviewService) {
         this.userService = userService;
         this.restTemplate = new RestTemplate();
+        this.reviewService = reviewService;
     }
 
     @PostMapping("/v1/login")
-    public ResponseEntity<?> getUser(@Validated @RequestBody LoginRequest loginRequest) throws IllegalArgumentException {
+    public ResponseEntity<String> getUser(@Validated @RequestBody LoginRequest loginRequest) throws IllegalArgumentException {
             String loginUrl = "http://localhost:8081/token-service/v1/request-token";
             String response = restTemplate.postForObject(loginUrl, loginRequest, String.class);
             System.out.println(response);
@@ -39,20 +44,12 @@ public class UserController {
             return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/v1/show-credentials")
-    public ResponseEntity<?> showCredentials(Authentication authentication){
+    @PostMapping("/v1/save-review")
+    public ResponseEntity<?> saveReview(@Validated ReviewRequest reviewRequest) throws IllegalArgumentException{
 
-        return ResponseEntity.ok(authentication.toString());
+        return ResponseEntity.ok().body(reviewService.saveReview(reviewRequest)) ;
+
     }
 
-    @GetMapping("/v1/show-token")
-    public ResponseEntity<?> showToken(@RequestHeader("Authorization") String token) {
-        token = token.replace("Bearer ", "");
 
-        String[] chunks = token.split("\\.");
-        Base64.Decoder decoder = Base64.getUrlDecoder();
-
-        String payload = new String(decoder.decode(chunks[1]));
-        return ResponseEntity.ok(payload);
-    }
 }

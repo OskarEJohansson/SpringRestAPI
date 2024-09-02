@@ -1,3 +1,6 @@
 Find out why @Secured / Preauth does not work.
-Find out if decoder works as expected
-Find out more about roles and auths.
+- REMEMBER TO ADD SCOPE_ INFRONT OF ROLE_ IN SECURITY CONFIGS.
+
+
+Add update user in Usercontroller for users details, update any user for ADMIN.
+

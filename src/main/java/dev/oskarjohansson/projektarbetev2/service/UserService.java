@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-public interface UserService extends UserDetailsService {
+public interface UserService  {
 
-    UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
+    Optional<MyUser> loadUserByUsername(String username) throws UsernameNotFoundException;
 
     Optional<MyUser> saveUser(RegisterRequest registerRequest) throws IllegalArgumentException;
 

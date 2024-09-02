@@ -42,8 +42,8 @@ public final class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
+    public Optional<MyUser> loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByUsername(username);
     }
 
     public MyUser createNewUser(@Validated RegisterRequest registerRequest) throws IllegalArgumentException {
