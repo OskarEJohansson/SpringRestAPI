@@ -10,11 +10,29 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
+
+import java.security.GeneralSecurityException;
+import java.util.Arrays;
 
 @RestControllerAdvice()
 public class GlobalExceptionHandling {
 
     private static final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandling.class);
+
+
+    @ExceptionHandler
+    public ResponseEntity<String> handleGeneralSecurityException(GeneralSecurityException ex){
+        LOG.debug("GeneralSecurity Exception: " + ex.getMessage(), "STACKTRACE" + ex.getStackTrace());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("General Exception msg: " + ex.getMessage());
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<String> handleUnauthorizedException(HttpClientErrorException.Unauthorized ex){
+
+        LOG.debug("Unauthorized Exception: STACKTRACE" + ex.getStackTrace().toString());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized :" + ex.getMessage());
+    }
 
     @ExceptionHandler
     public ResponseEntity<String> handleDuplicateKeyException(DuplicateKeyException ex){
@@ -30,8 +48,8 @@ public class GlobalExceptionHandling {
 
     @ExceptionHandler
     public ResponseEntity<String> handleGeneralException(Exception ex){
-        LOG.error("GeneralException error, stack trace: {}", ex.getStackTrace().toString());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred" + ex.getMessage());
+        LOG.error("GeneralException error, stack trace: {}", ex.fillInStackTrace());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " +  ex.getMessage());
     }
 
     @ExceptionHandler

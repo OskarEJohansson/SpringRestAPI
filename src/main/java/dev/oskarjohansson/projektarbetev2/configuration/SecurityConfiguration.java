@@ -31,7 +31,6 @@ public class SecurityConfiguration {
         return new BCryptPasswordEncoder();
     }
 
-
     @Bean
     @Qualifier(value = "rsaPublicKey")
     public RSAPublicKey getPublicKeyFromTokenService() throws Exception{
@@ -49,9 +48,6 @@ public class SecurityConfiguration {
         return http
                 .csrf(csrf -> csrf.disable())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
-                .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                        .accessDeniedHandler(new BearerTokenAccessDeniedHandler()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/user-controller/v1/login").permitAll()
