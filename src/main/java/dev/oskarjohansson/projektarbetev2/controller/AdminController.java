@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @RestController
 @EnableMethodSecurity(securedEnabled = true)
-@Secured("SCOPE_ROLE_ADMIN")
+@Secured("SCOPE_ADMIN")
 @RequestMapping("/admin-controller")
 public class AdminController {
 
@@ -25,14 +25,15 @@ public class AdminController {
     }
 
     @PostMapping("/v1/save-user")
-    public ResponseEntity<?> saveUser(@RequestBody RegisterRequest registerRequest, Authentication authentication) throws IllegalArgumentException {
+    public ResponseEntity<?> saveUser(@RequestBody RegisterRequest registerRequest) throws IllegalArgumentException {
         Optional<MyUser> response = userService.saveUser(registerRequest);
 
         return ResponseEntity.ok(response.get());
     }
 
     @GetMapping("/v1/test-security")
-    public ResponseEntity<String> testMethodSecurity(Principal principal){
+    public ResponseEntity<String> testMethodSecurity(Principal principal, Authentication authentication){
+        System.out.println(authentication.getAuthorities());
         return ResponseEntity.ok("Hello " + principal.getName());
     }
 }

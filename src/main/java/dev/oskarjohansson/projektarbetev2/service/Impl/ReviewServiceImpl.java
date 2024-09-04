@@ -7,10 +7,12 @@ import dev.oskarjohansson.projektarbetev2.repository.ReviewRepository;
 import dev.oskarjohansson.projektarbetev2.repository.UserRepository;
 import dev.oskarjohansson.projektarbetev2.service.ReviewService;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.Optional;
 
+@Service
 public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository reviewRepository;
@@ -24,10 +26,11 @@ public class ReviewServiceImpl implements ReviewService {
 
 
     /// CLEAN UP
+    @Override
     public Review saveReview(ReviewRequest reviewRequest, Authentication authentication) throws IllegalArgumentException {
 
         String userID = null;
-        Optional<MyUser> response = userRepository.findByUsername(authentication.getPrincipal().toString());
+        Optional<MyUser> response = userRepository.findByUsername(authentication.getName());
 
         if (response.isPresent()) {
             userID = response.get().id();
